@@ -2,6 +2,7 @@ import os
 
 import tensorflow as tf
 import numpy as np
+import pandas as pd
 
 from sklearn.metrics import f1_score, classification_report, confusion_matrix
 
@@ -14,7 +15,7 @@ tf.app.flags.DEFINE_string('data_dir', '../../data', 'TODO')
 
 tf.app.flags.DEFINE_integer('epochs', 1, 'TODO')
 tf.app.flags.DEFINE_integer('batch_size', 128, 'TODO')
-tf.app.flags.DEFINE_float('learning_rate', 1e-2, 'TODO')
+tf.app.flags.DEFINE_float('learning_rate', 1e-5, 'TODO')
 tf.app.flags.DEFINE_integer('embedding_dim', 300, 'TODO')
 
 tf.app.flags.DEFINE_string('embeddings_path', None, 'TODO')
@@ -37,26 +38,31 @@ def main(unused_argv):
 
     X, y = get_data(files, feature_col='sentence_uk', target_col='y')
     X = clean_data(X)
-    X = lemmatize_with_pos(X)
-    x_train, x_test, y_train, y_test = get_train_test_split(X, y)
+    x_train_orig, x_test_orig, y_train, y_test = get_train_test_split(X.values, y.values)
 
-    max_doc_length = max([len(x) for x in x_train.values])
-    vocabulary_processor = tf.contrib.learn.preprocessing.VocabularyProcessor(max_doc_length,
-                                                                              tokenizer_fn=lambda x: x)
-    x_train = np.array(list(vocabulary_processor.fit_transform(x_train)))
-    x_test = np.array(list(vocabulary_processor.transform(x_test)))
+    max_doc_length = max([len(x) for x in x_train_orig])
+
+    w2v = Word2VecEmbeddingsLoader(FLAGS.embeddings_path, FLAGS.embedding_dim)
+    vocabulary_processor = VocabularyProcessor(max_doc_length, w2v.vocabulary)
+
+    x_train_seq_len = np.array([len(x) for x in x_train_orig], dtype=np.int32)
+    x_test_seq_len = np.array([len(x) for x in x_test_orig], dtype=np.int32)
+    x_train = vocabulary_processor.transform(x_train_orig)
+    x_test = vocabulary_processor.transform(x_test_orig)
 
     params = {
-        VOCAB_SIZE: len(vocabulary_processor.vocabulary_),
+        VOCAB_SIZE: w2v.vocabulary_size,
         EMBEDDING_DIM: FLAGS.embedding_dim,
+        EMBEDDING_MATRIX: w2v.embedding_matrix,
         SEQUENCE_LENGTH: max_doc_length,
         LEARNING_RATE: FLAGS.learning_rate,
     }
-    classifier = tf.estimator.Estimator(model_fn=embedding_model, params=params)
+    classifier = tf.estimator.Estimator(model_fn=rnn_model, params=params)
 
     train_input_fn = tf.estimator.inputs.numpy_input_fn(
-        x={WORD_FEATURE: x_train},
-        y=y_train.values,
+        x={WORD_FEATURE: x_train,
+           SEQUENCE_LENGTH_FEATURE: x_train_seq_len},
+        y=y_train,
         num_epochs=FLAGS.epochs,
         batch_size=FLAGS.batch_size,
         shuffle=True,
@@ -64,8 +70,9 @@ def main(unused_argv):
     classifier.train(input_fn=train_input_fn)
 
     test_input_fn = tf.estimator.inputs.numpy_input_fn(
-        x={WORD_FEATURE: x_test},
-        y=y_test.values,
+        x={WORD_FEATURE: x_test,
+           SEQUENCE_LENGTH_FEATURE: x_test_seq_len},
+        y=y_test,
         num_epochs=1,
         batch_size=y_test.shape[0],
         shuffle=False,
@@ -78,6 +85,10 @@ def main(unused_argv):
     print('Test F1 score: ', f1_score(y_test, y_pred, average='macro'))
     print(classification_report(y_test, y_pred))
     print(confusion_matrix(y_test, y_pred))
+
+    # df = pd.DataFrame({'y_true': y_test.tolist(), 'y_pred': y_pred, 'x': x_test_orig.tolist()})
+    # df[['y_pred', 'y_true', 'x']].to_csv(os.path.join(FLAGS.data_dir, 'errors.csv'), index=False, header=True)
+
 
 
 if __name__ == '__main__':
