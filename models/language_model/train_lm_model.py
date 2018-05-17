@@ -53,7 +53,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Language model for Ukrainian')
     parser.add_argument('--input_dir', dest='input_dir', help='Dir with numpy arrays')
     parser.add_argument('--model_dir', dest='model_dir', help='Dir to save model to')
-    parser.add_argument('epochs', dest='epochs', type=int, default=1, help='Num epochs')
+    parser.add_argument('--epochs', dest='epochs', type=int, default=1, help='Num epochs')
 
     args = parser.parse_args()
     main(args)
