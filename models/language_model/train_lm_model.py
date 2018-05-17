@@ -39,21 +39,21 @@ def main(args):
     lr = 1e-3
     lrs = lr
 
-    learner.fit(lrs, 1, wds=wd, use_clr=(32, 2, 0.95, 0.85), cycle_len=1,
-                cycle_save_name='lm_ukrainian_cycle', best_save_name='lm_ukrainian_best')
+    learner.fit(lrs, 1, wds=wd, use_clr=(32, 2, 0.95, 0.85), cycle_len=args.epochs,
+                cycle_save_name='lm_ukrainian_cycle', best_save_name='lm_ukrainian_best_v2')
 
-    learner.save('lm_ukrainian')
-    learner.save_encoder('lm_ukrainian_encoder')
+    learner.save('lm_ukrainian_v2')
+    learner.save_encoder('lm_ukrainian_encoder_v2')
 
-    learner.load('lm_ukrainian')
-    print('Learning rates:')
-    print(learner.lr_find(start_lr=lrs / 10, end_lr=lrs * 10, linear=True))
+    # learner.load('lm_ukrainian')
+    # print(learner.lr_find(start_lr=lrs / 10, end_lr=lrs * 10, linear=True))
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Language model for Ukrainian')
     parser.add_argument('--input_dir', dest='input_dir', help='Dir with numpy arrays')
     parser.add_argument('--model_dir', dest='model_dir', help='Dir to save model to')
+    parser.add_argument('epochs', dest='epochs', type=int, default=1, help='Num epochs')
 
     args = parser.parse_args()
     main(args)
