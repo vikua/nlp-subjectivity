@@ -39,7 +39,8 @@ def main(args):
     lr = 1e-3
     lrs = lr
 
-    learner.fit(lrs, 1, wds=wd, use_clr=(32, 2, 0.95, 0.85), cycle_len=1)
+    learner.fit(lrs, 1, wds=wd, use_clr=(32, 2, 0.95, 0.85), cycle_len=1,
+                cycle_save_name='lm_ukrainian_cycle', best_save_name='lm_ukrainian_best')
 
     learner.save('lm_ukrainian')
     learner.save_encoder('lm_ukrainian_encoder')
