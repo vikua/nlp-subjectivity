@@ -84,42 +84,25 @@ def down_sample(data):
     return shuffle(pd.concat([obj_d, subj]))
 
 
-def clean_data(text):
-    reg = re.compile("""[\"#$%&*\-+/:;<=>@^`~…\\(\\)⟨⟩{}\[\|\]‒–—―«»“”‘’№]""")
-    result = text.apply(lambda sent: [re.sub(reg, '', x) for x in sent])
-    result = result.apply(lambda sent: [x for x in sent if x.strip()])
-
-    result = result.apply(lambda sent: [x.lower() for x in sent])
-
-    return result
-
-
-def lemmatize_sentence_with_pos(words, morph):
-    result = []
-    for w in words:
-        m = morph.parse(w)[0]
-        result.append('{}_{}'.format(m.normal_form, m.tag.POS))
-    return result
-
-
-def lemmatize_chunk(chunk, func=lemmatize_sentence_with_pos):
-    morph = pymorphy2.MorphAnalyzer(lang='uk')
-    return chunk.apply(lambda x: func(x, morph))
-
-
-def lemmatize_with_pos(text):
-    cpu_count = mp.cpu_count()
-
-    print('Starting lemmatization in {} processes'.format(cpu_count))
-
-    pool = mp.Pool(cpu_count)
-    function = partial(lemmatize_chunk, func=lemmatize_sentence_with_pos)
-    results = pool.map(function, np.array_split(text, cpu_count))
-    pool.close()
-    pool.join()
-
-    return pd.concat(results)
-
-
 def get_train_test_split(X, y, test_size=0.2):
     return train_test_split(X, y, test_size=test_size, stratify=y, random_state=1234)
+
+
+def lemmatize(words, morph):
+    result_words = []
+    for w in words:
+        m = morph.parse(w)[0]
+        if m.normal_form:
+            result_words.append(m.normal_form)
+    return result_words
+
+
+def delete_stop_words(words, stop_words):
+    result = []
+    for w in words:
+        if w not in stop_words:
+            result.append(w)
+    return result
+
+def tokenizer(x): 
+    return x

@@ -2,3 +2,11 @@ body {
   min-height: 75rem;
   padding-top: 5rem;
 }
+
+.form-control {
+  height: 400px;
+}
+
+div.form-control {
+  overflow-y: auto;
+}

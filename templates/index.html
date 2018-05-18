@@ -7,10 +7,10 @@
         <link href="http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
         <link href="../static/css/main.css" rel="stylesheet">
 
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-
+        <script src="../static/js/main.js"></script>
     </head>
 
     <body>
@@ -38,8 +38,8 @@
             <div class="jumbotron">
                 <div class="container">
                     <h1 class="display-3">Subjective/Objective phrases classifier</h1>
-                    <p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
-                    <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more »</a></p>
+                    <!--<p>This is a template for a simple marketing or informational website. It includes a large callout called a jumbotron and three supporting pieces of content. Use it as a starting point to create something more unique.</p>-->
+                    <!--<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more »</a></p>-->
                 </div>
             </div>
             <div class="container">
@@ -50,9 +50,21 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text">News Article</span>
                             </div>
-                            <textarea class="form-control" aria-label="With textarea"></textarea>
+                            <textarea id="article" class="form-control" aria-label="With textarea"></textarea>
                         </div>
-                        <p><a class="btn btn-secondary" href="#" role="button">Submit</a></p>
+                        <p><button class="btn btn-secondary" type="button" id="classify-button">Submit</button></p>
+                    </div>
+                </div>
+                <div class="row" id="result" style="display: none">
+                    <div class="col-md-12">
+                        <h2>Result</h2>
+                        <!--<div class="input-group mb-3">-->
+                            <!--<div class="input-group-prepend">-->
+                                <!--<span class="input-group-text">News Article</span>-->
+                            <!--</div>-->
+                            <!--<textarea class="form-control" aria-label="With textarea"></textarea>-->
+                        <!--</div>-->
+                        <div class="form-control"></div>
                     </div>
                 </div>
             </div>
