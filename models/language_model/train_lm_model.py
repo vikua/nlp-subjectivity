@@ -36,14 +36,14 @@ def main(args):
     learner.clip = 0.2
     learner.unfreeze()
 
-    lr = 1e-3
+    lr = 1e-4
     lrs = lr
 
     learner.fit(lrs, 1, wds=wd, use_clr=(32, 2, 0.95, 0.85), cycle_len=args.epochs,
-                cycle_save_name='lm_ukrainian_cycle', best_save_name='lm_ukrainian_best_v2')
+                cycle_save_name='lm_ukrainian_cycle_v3', best_save_name='lm_ukrainian_best_v3')
 
-    learner.save('lm_ukrainian_v2')
-    learner.save_encoder('lm_ukrainian_encoder_v2')
+    learner.save('lm_ukrainian_v3')
+    learner.save_encoder('lm_ukrainian_encoder_v3')
 
     # learner.load('lm_ukrainian')
     # print(learner.lr_find(start_lr=lrs / 10, end_lr=lrs * 10, linear=True))
