@@ -39,7 +39,7 @@ def main(args):
     lr = 1e-3
     lrs = lr
 
-    learner.fit(lrs/2, 1, wds=wd, use_clr=(32, 2, 0.95, 0.85), cycle_len=args.epochs,
+    learner.fit(lrs, 1, wds=wd, use_clr=(32, 2, 0.95, 0.85), cycle_len=args.epochs,
                 cycle_save_name='lm_ukrainian_cycle_v3', best_save_name='lm_ukrainian_best_v3')
 
     learner.save('lm_ukrainian_v3')
