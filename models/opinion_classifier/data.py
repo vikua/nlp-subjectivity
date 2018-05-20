@@ -186,6 +186,8 @@ def clean_data(text):
 
 
 re1 = re.compile(r'  +')
+BOS = 'xbos'  # beginning-of-sentence tag
+FLD = 'xfld'  # data field tag
 
 
 def fixup(x):
