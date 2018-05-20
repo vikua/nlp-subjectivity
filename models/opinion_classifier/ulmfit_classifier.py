@@ -86,18 +86,20 @@ def main(args):
 
     # train last layer
     learn.fit(lrs, 1, wds=wd, cycle_len=1, use_clr=(8, 3))
-    learn.save('clas_0')
+    learn.save('{}_0'.format(args.model_name))
 
     # train two last layers
-    learn.load('clas_0')
+    learn.load('{}_0'.format(args.model_name))
     learn.freeze_to(-2)
     learn.fit(lrs, 1, wds=wd, cycle_len=1, use_clr=(8, 3))
-    learn.save('clas_1')
+    learn.save('{}_1'.format(args.model_name))
 
-    learn.load('clas_1')
+    learn.load('{}_1'.format(args.model_name))
     learn.unfreeze()
-    learn.fit(lrs, 1, wds=wd, cycle_len=5, use_clr=(32, 10), best_save_name='clas_best', cycle_save_name='clas_cycle')
-    learn.save('clas_final')
+    learn.fit(lrs, 1, wds=wd, cycle_len=args.epochs, use_clr=(32, 10),
+              best_save_name='{}_best'.format(args.model_name),
+              cycle_save_name='{}_cycle'.format(args.model_name))
+    learn.save('{}_final'.format(args.model_name))
 
 
 if __name__ == '__main__':
@@ -107,6 +109,8 @@ if __name__ == '__main__':
     parser.add_argument('--lm_model_path', dest='lm_model_path', help='Path to trained ULMfit model')
     parser.add_argument('--lm_model_name', dest='lm_model_name', help='Name of trained ULMfit model')
     parser.add_argument('--chunksize', dest='chunksize', default=2000, type=int, help='Pandas chunk size')
+    parser.add_argument('--epochs', dest='epochs', default=5, type=int, help='Num epochs')
+    parser.add_argument('--model_name', dest='model_name', default='clas', help='Model name')
 
     args = parser.parse_args()
     main(args)
