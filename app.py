@@ -3,7 +3,7 @@ import json
 from flask import Flask, render_template, json, request
 
 from nltk.tokenize import sent_tokenize
-from models.estimators import BaselineSubjectivityEstimator
+from models.estimators import  ULMFitEstimator
 
 
 app = Flask(__name__)
@@ -19,7 +19,10 @@ def classify():
     text = request.json['text']
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    est = BaselineSubjectivityEstimator(os.path.join(dir_path, 'bin'))
+    # est = BaselineSubjectivityEstimator(os.path.join(dir_path, 'bin'))
+    itos_path = os.path.join(dir_path, 'data', 'itos.pkl')
+    model_path = os.path.join(dir_path, 'bin', 'models', 'golden_class_best.h5')
+    est = ULMFitEstimator(model_path, itos_path)
 
     raw_sentences = sent_tokenize(text, language='russian')
     sentences = est.transform_sentences(raw_sentences)
@@ -34,7 +37,7 @@ def classify():
             score = -s_score
         result.append({
             'sentence': s,
-            'score': score
+            'score': float(score)
         })
 
     return json.dumps(result)
